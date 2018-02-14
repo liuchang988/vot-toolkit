@@ -14,3 +14,7 @@ run_experiments.m
 run_test.m
 testing/
 *.pyc
+*.jpg
+*.png
+test*
+.vscode/

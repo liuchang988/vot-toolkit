@@ -45,13 +45,35 @@ if ~exist(list_file, 'file') && ~isempty(bundle_url)
         print_text('Unable to retrieve sequence bundle from the server. This is either a connection problem or the server is temporary offline.');
         print_text('Please try to download the bundle manually from %s and uncompress it to %s', bundle_url, directory);
         return;
-    end;
-end;
+    end
+end
 
-fid = fopen(list_file, 'r');
+
+mode = get_global_variable('mode', 0);
+if mode == 0
+    try
+        fid = fopen(list_file, 'r');
+    catch
+        mode = 1;
+    end
+end
+if mode == 1
+    seq_no = 0;
+    seqs = get_global_variable('seq_names', '');
+    seq_num = length(seqs);
+end
 
 while true
-    sequence_name = fgetl(fid);
+    if mode == 0
+        sequence_name = fgetl(fid);
+    else
+        seq_no = seq_no + 1;
+        if seq_no > seq_num
+            break;
+        end
+        sequence_name = seqs{seq_no};
+    end
+    
     if sequence_name == -1
         break;
     end
@@ -60,12 +82,14 @@ while true
 
     if ~exist(sequence_directory, 'dir') 
         continue;
-    end;
+    end
 
     print_debug('Loading sequence %s', sequence_name);
     
     sequences{end+1} = create_sequence(sequence_directory, 'dummy', dummy); %#ok<AGROW>
 
-end;
+end
 
-fclose(fid);
+if mode == 0
+    fclose(fid);
+end

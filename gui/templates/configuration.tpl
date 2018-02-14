@@ -9,7 +9,4 @@ set_global_variable('version', {{version}});
 % Disable result caching
 % set_global_variable('cache', 0);
 
-% Select experiment stack
-set_global_variable('stack', '{{stack}}');
-
 set_global_variable('identifier', '{{tracker}}');
