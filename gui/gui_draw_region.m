@@ -27,7 +27,7 @@ if isnumeric(region)
             y = [region(i, 2), region(i, 2) + region(i, 4), region(i, 2) + ...
                  region(i, 4), region(i, 2), region(i, 2)];
 
-            plot(app.canvas, x, y, 'Color', color, 'LineWidth', width);
+            plot(app.moniter, x, y, 'Color', color, 'LineWidth', width);
         end;
 
     elseif numel(region) >= 6 && mod(numel(region), 2) == 0

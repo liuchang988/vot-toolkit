@@ -1,27 +1,4 @@
 function [sequences, experiments] = gui_test_init(varargin)
-% workspace_load Initializes the current workspace
-%
-% This function initializes the current workspace by reading sequences and
-% experiments as well as initializing global variables. It also checks if native
-% resources have to be downloaded or compiled.
-%
-% To make loading faster when running the script multiple times, it checks if
-% sequences and experiments variables exist in the workspace and if they are
-% cell arrays and just reuses them. No further check is performed so this may
-% lead to problems when switching workspaces. Clear the workspace or use 'Force'
-% argument to avoid issues with cached data.
-%
-% Input:
-% - varargin[Force] (boolean): Force reloading the sequences and experiments.
-% - varargin[Directory] (string): Set the directory of the workspace (otherwise
-%   current directory is used.
-% - varargin[OnlyDefaults] (boolean): Only set default global variables and skip
-%   workspace initialization.
-%
-% Output:
-% - sequences (cell): Array of sequence structures.
-% - experiments (cell): Array of experiment structures.
-%
 
 force = false;
 directory = pwd();
@@ -94,7 +71,11 @@ addpath(get_global_variable('native_path'));
 
 experiment_stack = get_global_variable('stack', 'vot2013');
 stack_configuration = str2func(['stack_', experiment_stack]);
-experiments = stack_configuration();
+try
+    experiments = stack_configuration();
+catch
+    experiments = stack_default();
+end
 
 if cached
     print_debug('Skipping loading sequence data (using cached structures)');

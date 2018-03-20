@@ -22,23 +22,19 @@ end
 
 try
 
-    % while 1
+    if ~isempty(sequences)
 
-        if ~isempty(sequences)
+        data.figure = 1;
+        data.sequence = sequences{1};
+        data.index = 1;
+        data.gui = use_gui;
+        data.app = app;
 
-            data.figure = 1;
-            data.sequence = sequences{1};
-            data.index = 1;
-			data.gui = use_gui;
-            data.app = app;
+        tracker_run(tracker, @callback, data);
 
-            % tracker_run(tracker, @callback, data);
-
-        else
-            % break;
-        end
-
-    % end
+    else
+        % break;
+    end
 
 catch e
     % Restore debug flag
@@ -55,26 +51,16 @@ function [image, region, properties, data] = callback(state, data)
 	region = [];
 	image = [];
     properties = struct();
-    app = data.app;
 
-	% Handle initial frame (initialize for the first time)
 	if isempty(state.region)
 		region = get_region(data.sequence, data.index);
 		image = get_image(data.sequence, data.index);
 		return;
-	end;
-
+	end
 	if data.gui
 
-		image_path = get_image(data.sequence, data.index);
-		hf = sfigure(data.figure);
-		set(hf, 'Name', sprintf('%s (%d/%d t=%.3fs)', data.sequence.name, data.index, data.sequence.length, state.time), 'NumberTitle', 'off');
-		imshow(image_path, 'Parent', app.canvas);
-		hold(app.canvas, 'on');
-		gui_draw_region(get_region(data.sequence, data.index), [1 0 0], 2, app);
-		gui_draw_region(state.region, [0 1 0], 1, app);
-		hold(app.canvas, 'off');
-		drawnow;
+        update_gui(state, data);
+        
 		try
 		    [~, ~, c] = ginput(1);
 		catch
@@ -99,7 +85,7 @@ function [image, region, properties, data] = callback(state, data)
 			print_text('Quitting.');
 		    return;
 		end
-	end;
+    end
 
 	data.index = data.index + 1;
 
@@ -111,8 +97,3 @@ function [image, region, properties, data] = callback(state, data)
     image = get_image(data.sequence, data.index);
 
 end
-
-
-
-
-
